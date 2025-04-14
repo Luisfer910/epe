@@ -1,0 +1,27 @@
+/* Estilos personalizados para el sistema de reservas de hotel */
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma
+}
+
+
+.hotel-card {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.hotel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
+
+.badge {
+    font-weight: 500;
+}
