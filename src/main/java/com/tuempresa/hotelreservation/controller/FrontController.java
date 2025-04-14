@@ -8,77 +8,61 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author LFMG9
+ * Controlador principal que maneja todas las solicitudes entrantes
+ * @autor LFMG9
  */
 @WebServlet(name = "FrontController", urlPatterns = {"/app/*"})
 public class FrontController extends HttpServlet {
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    // Maneja las solicitudes GET
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        procesarSolicitud(request, response);
+        procesarSolicitud(request, response); // Llama al método que procesa las solicitudes
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    // Maneja las solicitudes POST
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        procesarSolicitud(request, response);
+        procesarSolicitud(request, response); // Llama al mismo método para procesar
     }
 
-    /**
-     * Procesa las solicitudes y las dirige al controlador correspondiente
-     * 
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    // Método para procesar las solicitudes y dirigirlas al controlador adecuado
     private void procesarSolicitud(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        String path = request.getPathInfo();
+        String path = request.getPathInfo(); // Obtiene el camino después de "/app"
         
         if (path == null) {
-            path = "/";
+            path = "/"; // Si no hay un camino específico, usa la raíz
         }
         
+        // Dependiendo del camino, dirige a diferentes controladores o vistas
         switch (path) {
             case "/":
+                // Muestra la página principal
                 request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
                 break;
             case "/hoteles":
+                // Llama al controlador de hoteles
                 new HotelController().procesarSolicitud(request, response);
                 break;
             case "/habitaciones":
+                // Llama al controlador de habitaciones
                 new HabitacionController().procesarSolicitud(request, response);
                 break;
             case "/reservas":
+                // Llama al controlador de reservas
                 new ReservaController().procesarSolicitud(request, response);
                 break;
             case "/usuarios":
+                // Llama al controlador de usuarios
                 new UsuarioController().procesarSolicitud(request, response);
                 break;
             default:
+                // Si el camino no coincide con ninguno, redirige a la página principal
                 response.sendRedirect(request.getContextPath() + "/app/");
                 break;
         }
     }
 }
-
-

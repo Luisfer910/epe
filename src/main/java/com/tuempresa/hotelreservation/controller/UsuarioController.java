@@ -8,9 +8,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 /**
- *
- * @author LFMG9
+ * Controlador para manejar acciones de usuario
+ * @autor LFMG9
  */
 public class UsuarioController {
     
@@ -20,12 +21,17 @@ public class UsuarioController {
         this.usuarioDAO = new UsuarioDAOImpl();
     }
     
+    /**
+     * Procesa la solicitud HTTP y dirige a la acción correspondiente.
+     * @param request  La solicitud HTTP
+     * @param response La respuesta HTTP
+     */
     public void procesarSolicitud(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String action = request.getParameter("action");
         
         if (action == null) {
-            action = "login";
+            action = "login"; // Acción por defecto si no se especifica
         }
         
         switch (action) {
@@ -50,17 +56,22 @@ public class UsuarioController {
         }
     }
     
+    /**
+     * Muestra el formulario de inicio de sesión.
+     */
     private void mostrarFormularioLogin(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/usuario/login.jsp").forward(request, response);
     }
     
+    /**
+     * Autentica al usuario verificando su correo y contraseña.
+     */
     private void autenticarUsuario(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String correo = request.getParameter("correo");
         String contraseña = request.getParameter("contraseña");
         
-        // Para un proyecto educativo, podemos simplificar la autenticación
         Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
         
         if (usuario != null && usuario.getContraseña().equals(contraseña)) {
@@ -73,11 +84,17 @@ public class UsuarioController {
         }
     }
     
+    /**
+     * Muestra el formulario de registro de usuario.
+     */
     private void mostrarFormularioRegistro(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/views/usuario/registro.jsp").forward(request, response);
     }
     
+    /**
+     * Registra a un nuevo usuario en el sistema.
+     */
     private void registrarUsuario(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String nombre = request.getParameter("nombre");
@@ -86,19 +103,18 @@ public class UsuarioController {
         String contraseña = request.getParameter("contraseña");
         String telefono = request.getParameter("telefono");
         
-        // Verificar si el correo ya está registrado
+        // Verifica si el correo ya está registrado
         if (usuarioDAO.buscarPorCorreo(correo) != null) {
             request.setAttribute("error", "El correo ya está registrado");
             request.getRequestDispatcher("/WEB-INF/views/usuario/registro.jsp").forward(request, response);
             return;
         }
         
-        // Crear y guardar el usuario
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setApellido(apellido);
         usuario.setCorreo(correo);
-        usuario.setContraseña(contraseña); // Para un proyecto educativo, no hasheamos la contraseña
+        usuario.setContraseña(contraseña); // No se hashea la contraseña para simplificar
         usuario.setTelefono(telefono);
         
         usuarioDAO.guardar(usuario);
@@ -107,12 +123,13 @@ public class UsuarioController {
         request.getRequestDispatcher("/WEB-INF/views/usuario/login.jsp").forward(request, response);
     }
     
+    /**
+     * Cierra la sesión del usuario actual.
+     */
     private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        session.invalidate();
+        session.invalidate(); // Invalida la sesión actual
         response.sendRedirect(request.getContextPath() + "/app/");
     }
 }
-
-

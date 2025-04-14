@@ -5,51 +5,64 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
+
 /**
- *
- * @author LFMG9
+ * Clase para manejar la info de las habitaciones en el sistema de reservas
+ * @autor LFMG9
  */
 
-@Entity
-@Table(name = "habitaciones")
-public class Habitacion implements Serializable {
+@Entity // Indica que la clase se guardará como una tabla en la base de datos
+@Table(name = "habitaciones") // Nombre de la tabla en la BD
+public class Habitacion implements Serializable { // Serializable permite guardar objetos en archivos
     
+    // Un número para identificar la versión de la clase, no te preocupes por esto
     private static final long serialVersionUID = 1L;
     
+    // ID único para cada habitación
     @Id
+    // El ID se genera automáticamente cuando se crea una nueva habitación
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    // Número de habitación, obligatorio
     @Column(nullable = false)
     private String numero;
     
+    // Tipo de habitación (ej. simple, doble), obligatorio
     @Column(nullable = false)
     private String tipo;
     
+    // Capacidad de personas, obligatorio
     @Column(nullable = false)
     private Integer capacidad;
     
+    // Precio por noche, obligatorio
     @Column(nullable = false)
     private BigDecimal precio;
     
+    // Si la habitación está disponible o no, obligatorio
     @Column(nullable = false)
     private Boolean disponible;
     
+    // Descripción de la habitación, opcional y hasta 500 caracteres
     @Column(length = 500)
     private String descripcion;
     
+    // Relación con el hotel al que pertenece la habitación, obligatorio
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
     
+    // Lista de reservas para esta habitación
     @OneToMany(mappedBy = "habitacion", cascade = CascadeType.ALL)
     private List<Reserva> reservas = new ArrayList<>();
     
-    // Constructores
+    // Constructor por defecto, inicializa la habitación como disponible
     public Habitacion() {
         this.disponible = true;
     }
     
+    // Constructor con los datos básicos necesarios
     public Habitacion(String numero, String tipo, Integer capacidad, BigDecimal precio) {
         this.numero = numero;
         this.tipo = tipo;
@@ -58,7 +71,8 @@ public class Habitacion implements Serializable {
         this.disponible = true;
     }
     
-    // Getters y setters
+    // Getters y setters para acceder y modificar los datos de manera segura
+    
     public Long getId() {
         return id;
     }
@@ -131,6 +145,7 @@ public class Habitacion implements Serializable {
         this.reservas = reservas;
     }
     
+    // Método para añadir una reserva y actualizar la relación
     public void addReserva(Reserva reserva) {
         reservas.add(reserva);
         reserva.setHabitacion(this);
